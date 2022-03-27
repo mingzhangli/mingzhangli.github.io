@@ -193,7 +193,7 @@
 
     <div id="article-banner">
   <h2>Vue项目开发-仿网易云APP</h2>
-  <p class="post-date">2022-03-22</p>
+  <p class="post-date">2022-03-27</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -201,31 +201,37 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><p>最近快毕业了呜呜呜，准备找工作，但是缺乏项目经验，于是就在B站找相关的课程，做了一个仿网易云的app！  </p>
+    <section class="markdown-content"><p>最近快毕业了呜呜呜，准备找工作，但是缺乏项目经验，于是就在B站找相关的课程，做了一个仿网易云的app！  </p>
 <p><a target="_blank" rel="noopener" href="https://github.com/mingzhangli/vuemusicProject.git">github地址</a>：<a target="_blank" rel="noopener" href="https://github.com/mingzhangli/vuemusicProject.git">https://github.com/mingzhangli/vuemusicProject.git</a></p>
-<h3 id="项目目录"><a href="#项目目录" class="headerlink" title="项目目录"></a>项目目录</h3><img src="/2022/03/22/hello-world/menu.png" width="300px" height="400px">
+<h3 id="项目目录"><a href="#项目目录" class="headerlink" title="项目目录"></a>项目目录</h3><img src="/2022/03/27/hello-world/menu.png" width="300px" height="400px">
 
-<h4 id="项目页面展示"><a href="#项目页面展示" class="headerlink" title="项目页面展示"></a>项目页面展示</h4><img src="/2022/03/22/hello-world/default-page.png">
-<img src="/2022/03/22/hello-world/gx.png">
-<img src="/2022/03/22/hello-world/gd.png">
-<img src="/2022/03/22/hello-world/gs.png">
-<img src="/2022/03/22/hello-world/phb.png">
-<img src="/2022/03/22/hello-world/singer.png">
-<img src="/2022/03/22/hello-world/gdlist.png">
-<img src="/2022/03/22/hello-world/list.png">
-<img src="/2022/03/22/hello-world/video.png">
-<img src="/2022/03/22/hello-world/video-detail.png">
-<img src="/2022/03/22/hello-world/login.png">
+<h4 id="项目页面展示"><a href="#项目页面展示" class="headerlink" title="项目页面展示"></a>项目页面展示</h4><img src="/2022/03/27/hello-world/default-page.png">
+<img src="/2022/03/27/hello-world/gx.png">
+<img src="/2022/03/27/hello-world/gd.png">
+<img src="/2022/03/27/hello-world/gs.png">
+<img src="/2022/03/27/hello-world/phb.png">
+<img src="/2022/03/27/hello-world/singer.png">
+<img src="/2022/03/27/hello-world/gdlist.png">
+<img src="/2022/03/27/hello-world/list.png">
+<img src="/2022/03/27/hello-world/video.png">
+<img src="/2022/03/27/hello-world/video-detail.png">
+<img src="/2022/03/27/hello-world/login.png">
 
-<h3 id="一-项目技术栈"><a href="#一-项目技术栈" class="headerlink" title="一.项目技术栈"></a>一.项目技术栈</h3><pre><code>   * Vue+Vue-router+element-ui+事件总线+axios+vue-store
-</code></pre>
-<img src="/2022/03/22/hello-world/main.png">  
+<h3 id="一-项目技术栈"><a href="#一-项目技术栈" class="headerlink" title="一.项目技术栈"></a>一.项目技术栈</h3><p>       * Vue+Vue-router+element-ui+事件总线+axios+vue-store<br><img src="/2022/03/27/hello-world/main.png">  </p>
+<h3 id="二-各个组件的加载数据请求"><a href="#二-各个组件的加载数据请求" class="headerlink" title="二.各个组件的加载数据请求"></a>二.各个组件的加载数据请求</h3><p> <a color="#A52A2A" size="4"><a target="_blank" rel="noopener" href="https://github.com/Binaryify/NeteaseCloudMusicApi.git">Markdwon</a></a>  提供的后台数据默认地址是 ‘<a target="_blank" rel="noopener" href="http://localhost:3000/&#39;">http://localhost:3000/&#39;</a> , 每个组件请求数据需要提供的参数是不一样的，我对此做了一个简单的封装！</p>
+<p> <img src="/2022/03/27/hello-world/axios.png"> </p>
+<h3 id="三-路由的配置"><a href="#三-路由的配置" class="headerlink" title="三.路由的配置"></a>三.路由的配置</h3><p>    这个项目的内容更新主要是Home组件里更新内容，顶部和左边还有下边的样式基本是写死不动的，所有的内容组件都是home组件路由的子路由嵌套,路由模式选用的是history模式!  </p>
+<img src="/2022/03/27/hello-world/router.png">
+<img src="/2022/03/27/hello-world/router2.png">
+<img src="/2022/03/27/hello-world/router3.png">
 
-
-<h3 id="二-首页的加载数据请求"><a href="#二-首页的加载数据请求" class="headerlink" title="二.首页的加载数据请求"></a>二.首页的加载数据请求</h3><p> <a color="#A52A2A" size="4"><a target="_blank" rel="noopener" href="https://github.com/Binaryify/NeteaseCloudMusicApi.git">Markdwon</a></a>  提供的后台数据默认地址是 ‘<a target="_blank" rel="noopener" href="http://localhost:3000/&#39;">http://localhost:3000/&#39;</a> ,每个组件请求数据需要提供的参数是不一样的，我对此做了一个简单的封装！</p>
- <img src="/2022/03/22/hello-world/axios.png"> 
-
-
+<h3 id="四-歌曲和视频的播放"><a href="#四-歌曲和视频的播放" class="headerlink" title="四.歌曲和视频的播放"></a>四.歌曲和视频的播放</h3><h5 id="每个歌曲和视频都不一样是如何判断播放指定的歌曲和视频"><a href="#每个歌曲和视频都不一样是如何判断播放指定的歌曲和视频" class="headerlink" title="每个歌曲和视频都不一样是如何判断播放指定的歌曲和视频?"></a>每个歌曲和视频都不一样是如何判断播放指定的歌曲和视频?</h5><ul>
+<li>每个歌曲和视频都有专门的id，我们只需要点击歌曲或者视频的时候把id传到store状态管理里，在里面定义了一个空字符串，让id赋值到这个空字符串，然后使用localStorage.getItem(‘userId’) 方法存到本地。在点击的同时，使用事件总线传到home组件里，然后调用getsong()获取对应的歌曲数据用props父子通信传到bottomBar组件播放音乐。 <img src="/2022/03/27/hello-world/content.png">
+ <img src="/2022/03/27/hello-world/sendID.png">
+ <img src="/2022/03/27/hello-world/store.png">
+ <img src="/2022/03/27/hello-world/home-detail.png">
+ <img src="/2022/03/27/hello-world/play-detail.png"></li>
+</ul>
 </section>
     <!-- Tags START -->
     
@@ -280,7 +286,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95"><span class="toc-nav-text">项目目录</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#%E9%A1%B9%E7%9B%AE%E9%A1%B5%E9%9D%A2%E5%B1%95%E7%A4%BA"><span class="toc-nav-text">项目页面展示</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%B8%80-%E9%A1%B9%E7%9B%AE%E6%8A%80%E6%9C%AF%E6%A0%88"><span class="toc-nav-text">一.项目技术栈</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BA%8C-%E9%A6%96%E9%A1%B5%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE%E8%AF%B7%E6%B1%82"><span class="toc-nav-text">二.首页的加载数据请求</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95"><span class="toc-nav-text">项目目录</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#%E9%A1%B9%E7%9B%AE%E9%A1%B5%E9%9D%A2%E5%B1%95%E7%A4%BA"><span class="toc-nav-text">项目页面展示</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%B8%80-%E9%A1%B9%E7%9B%AE%E6%8A%80%E6%9C%AF%E6%A0%88"><span class="toc-nav-text">一.项目技术栈</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BA%8C-%E5%90%84%E4%B8%AA%E7%BB%84%E4%BB%B6%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE%E8%AF%B7%E6%B1%82"><span class="toc-nav-text">二.各个组件的加载数据请求</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%B8%89-%E8%B7%AF%E7%94%B1%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-nav-text">三.路由的配置</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%9B%9B-%E6%AD%8C%E6%9B%B2%E5%92%8C%E8%A7%86%E9%A2%91%E7%9A%84%E6%92%AD%E6%94%BE"><span class="toc-nav-text">四.歌曲和视频的播放</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#%E6%AF%8F%E4%B8%AA%E6%AD%8C%E6%9B%B2%E5%92%8C%E8%A7%86%E9%A2%91%E9%83%BD%E4%B8%8D%E4%B8%80%E6%A0%B7%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E6%92%AD%E6%94%BE%E6%8C%87%E5%AE%9A%E7%9A%84%E6%AD%8C%E6%9B%B2%E5%92%8C%E8%A7%86%E9%A2%91"><span class="toc-nav-text">每个歌曲和视频都不一样是如何判断播放指定的歌曲和视频?</span></a></li></ol></li></ol></li></ol>
     
   </div>
 </aside>
@@ -290,7 +296,7 @@
 
 <script>
   (function () {
-    var url = 'https://mingzhangli.github.io/2022/03/22/hello-world/';
+    var url = 'https://mingzhangli.github.io/2022/03/27/hello-world/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
