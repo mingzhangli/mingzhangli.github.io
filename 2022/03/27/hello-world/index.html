@@ -198,7 +198,9 @@
 <h3 id="登录具体实现步骤"><a href="#登录具体实现步骤" class="headerlink" title="登录具体实现步骤"></a>登录具体实现步骤</h3><ul>
 <li>首先设置cookie过期时间</li>
 <li>调用第一个接口的做为第二个接口的key，然后渲染成二维码</li>
-<li>使用定时函数每隔5秒检测当前状态码是否是803，如果是的话，调用getLoginStatus()获取你的网易云账号歌单数据存在声明的变量里，同事调用localStorage.setItem(“userId”, this.user.userId),将cookie存到本地里，最后调用 location.reload()让页面重新刷新一下，将获取到的用户数据歌单渲染在页面里。</li>
+<li>使用定时函数每隔5秒检测当前状态码是否是803，如果是的话，调用getLoginStatus()获取你的网易云账号歌单数据存在声明的变量里，同事调用localStorage.setItem(“userId”, this.user.userId),将cookie存到本地里，最后调用 location.reload()让页面重新刷新一下，将获取到的用户数据歌单渲染在页面里。 <img src="/2022/03/27/hello-world/login-step.png">
+ <img src="/2022/03/27/hello-world/login-step2.png">
+ <img src="/2022/03/27/hello-world/login-step3.png"></li>
 </ul>
 </section>
     <!-- Tags START -->
