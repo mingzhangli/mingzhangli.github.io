@@ -131,62 +131,43 @@
   </div>
 </header>
 
-    <main class="app-body">
+    <div id="article-banner">
+  <h2>Archives</h2>
+  <p class="post-date">Archives</p>
+</div>
+<main class="app-body" id="archives">
   
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2022/04/10/new/">手动实现new方法</a>
-      </h2>
-      <p class="article-date">April 10, 2022</p>
-      
-      <div class="article-summary">
-        
-          最近看了很多面试题，有些面试的时候会让你实现手动写一些方法！
-使用js实现new 方法在开发过程中，我们经常需要用到new关键字，那么在使用new关键字的时
-候，到底实现了什么呢？我在查询mdn的时候，看到下面这段话。
-
-new 关键字会进行如下的操作：
-1.创建一个空的简单JavaScri ...
-        
+  
+  
+    <section class="time-section">
+  <h1 class="section-year">
+    2022
+  </h1>
+  <div class="section-list">
+    
+    
+      <div class="section-list-item">
+        <a href="/2022/04/10/new/" class="archive-title">手动实现new方法</a>
+        <p class="archive-date">04-10</p>
       </div>
-      <a class="more" href="/2022/04/10/new/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2022/03/27/hello-world/">Vue项目开发-仿网易云APP</a>
-      </h2>
-      <p class="article-date">March 27, 2022</p>
-      
-      <div class="article-summary">
-        
-          最近快毕业了呜呜呜，准备找工作，但是缺乏项目经验，于是就在B站找相关的课程，做了一个仿网易云的app！  
-github地址：https://github.com/mingzhangli/vuemusicProject.git
-项目目录
-
-项目页面展示
-
-
-
-
-
-
-
-
-
-
-
-一.项目技术栈  ...
-        
+    
+      <div class="section-list-item">
+        <a href="/2022/03/27/hello-world/" class="archive-title">Vue项目开发-仿网易云APP</a>
+        <p class="archive-date">03-27</p>
       </div>
-      <a class="more" href="/2022/03/27/hello-world/">Read more</a>
-    </article>
-  
-
+    
+  </div>
+</section>
   
 </main>
 
-
+<script>
+  (function () {
+    var url = 'https://mingzhangli.github.io/archives/2022/04/index.html';
+    $('#article-banner').geopattern(url);
+    $('.header').removeClass('fixed-header');
+  })();
+</script>
     <div class="scroll-top">
   <span class="arrow-icon"></span>
 </div>
