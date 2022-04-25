@@ -10,7 +10,7 @@
   
   <title>
     
-      手动实现new方法 | mingzhangli的blog
+      nextTick源码分析 | mingzhangli的blog
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -132,8 +132,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>手动实现new方法</h2>
-  <p class="post-date">2022-04-10</p>
+  <h2>nextTick源码分析</h2>
+  <p class="post-date">2022-04-25</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -141,18 +141,78 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><p>最近看了很多面试题，有些面试的时候会让你实现手动写一些方法！</p>
-<h3 id="使用js实现new-方法"><a href="#使用js实现new-方法" class="headerlink" title="使用js实现new 方法"></a>使用js实现new 方法</h3><pre><code>在开发过程中，我们经常需要用到new关键字，那么在使用new关键字的时
-候，到底实现了什么呢？我在查询mdn的时候，看到下面这段话。
-</code></pre>
-<h5 id="new-关键字会进行如下的操作："><a href="#new-关键字会进行如下的操作：" class="headerlink" title="new 关键字会进行如下的操作："></a>new 关键字会进行如下的操作：</h5><ul>
-<li>1.创建一个空的简单JavaScript对象（即{}）；</li>
-<li>2.为步骤1新创建的对象添加属性__proto__，将该属性链接至构造函数的原型对象 ；</li>
-<li>3.将步骤1新创建的对象作为this的上下文 ；</li>
-<li>4.如果该函数没有返回对象，则返回this。</li>
-</ul>
-<h5 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h5><img src="/2022/04/10/new/code.png">
+    <section class="markdown-content"><h1 id="nextTick源码分析"><a href="#nextTick源码分析" class="headerlink" title="nextTick源码分析"></a>nextTick源码分析</h1><h5 id="nextTick-是-Vue-的一个核心实现，在介绍-Vue-的-nextTick-之前，为了方便大家理解，我先简单介绍一下-JS-的运行机制。"><a href="#nextTick-是-Vue-的一个核心实现，在介绍-Vue-的-nextTick-之前，为了方便大家理解，我先简单介绍一下-JS-的运行机制。" class="headerlink" title="nextTick 是 Vue 的一个核心实现，在介绍 Vue 的 nextTick 之前，为了方便大家理解，我先简单介绍一下 JS 的运行机制。"></a>nextTick 是 Vue 的一个核心实现，在介绍 Vue 的 nextTick 之前，为了方便大家理解，我先简单介绍一下 JS 的运行机制。</h5><pre><code>JS 执行是单线程的，它是基于事件循环的。事件循环大致分为以下几个步骤：
 
+(1)所有同步任务都在主线程上执行，形成一个执行栈(execution context stack)。
+
+(2)主线程之外，还存在一个&quot;任务队列&quot;(task queue)。只要异步任务有了运行结果，就在&quot;任务队列&quot;之中放置一个事件。
+
+(3)一旦&quot;执行栈&quot;中的所有同步任务执行完毕，系统就会读取&quot;任务队列&quot;，看看里面有哪些事件。那些对应的异步任务，于是结束等待状态，进入执行栈，开始执行。
+
+(4)主线程不断重复上面的第三步。
+</code></pre>
+<h3 id="源码目录-src-x2F-core-x2F-util-x2F-next-tick-js"><a href="#源码目录-src-x2F-core-x2F-util-x2F-next-tick-js" class="headerlink" title="源码目录 src&#x2F;core&#x2F;util&#x2F;next-tick.js"></a>源码目录 src&#x2F;core&#x2F;util&#x2F;next-tick.js</h3><pre><code>const callbacks = [] //储存 nextTick 回调函数
+    let pending = false //只开启一个 timerFunc
+    let timerFunc // 定时函数
+    
+    vue的降级策略（兼容）promise -&gt; MutationObserver -&gt; setImmediate -&gt; setTimeout
+    原理：利用异步队列在每个宏任务运行完以后，UI 都会重渲染，那么在 微任务（异步事件回调） 中就完成数据更新，当前次事件循环 结束就可以得到最新的 UI 了。反之如果新建一个宏任务来做数据更新，那么渲染就会进行两次。
+
+    if (typeof Promise !== &#39;undefined&#39; &amp;&amp; isNative(Promise)) &#123;
+    //如果支持promise，使用promise实现
+    const p = Promise.resolve()
+    timerFunc = () =&gt; &#123;
+        p.then(flushCallbacks)
+    &#125;
+    &#125; else if (!isIE &amp;&amp; typeof MutationObserver !== &#39;undefined&#39;) &#123;
+    //如果Promise不支持，但支持MutationObserver
+    let counter = 1
+    const observer = new MutationObserver(flushCallbacks)
+    const textNode = document.createTextNode(String(counter))
+    observer.observe(textNode, &#123;
+        characterData: true
+    &#125;)
+    //改变 counter 属性触发 flushCallbacks
+    timerFunc = () =&gt; &#123;
+        counter = (counter + 1) % 2
+        textNode.data = String(counter)
+    &#125;
+    &#125; else if (typeof setImmediate !== &#39;undefined&#39; &amp;&amp; isNative(setImmediate)) &#123;
+    //上面两种都不支持，用setImmediate
+    timerFunc = () =&gt; &#123;
+        setImmediate(flushCallbacks)
+    &#125;
+    &#125; else &#123;
+    //都不支持使用setTimeout
+    timerFunc = () =&gt; &#123;
+        setTimeout(flushCallbacks, 0)
+    &#125;
+    &#125;
+    export function nextTick (cb, ctx) &#123;
+    let _resolve
+    //压入 nextTick 回调，可存入多个
+    callbacks.push(() =&gt; &#123;
+        cb &amp;&amp; cb.call(ctx) 
+    //cb参数是调用是传过来的回调函数，ctx则为上下文，函数内部利用call调用cb回调，改变cb内部this指向
+    &#125;)
+    //开起定时函数
+    if (!pending) &#123;
+        pending = true
+        timerFunc()
+    &#125;
+    &#125;
+    function flushCallbacks () &#123;
+    pending = false
+    const copies = callbacks.slice(0)
+    //复制 callback
+    callbacks.length = 0
+    //清除 callback
+    for (let i = 0; i &lt; copies.length; i++) &#123;
+        //以此调用 nextTick 回调
+        copies[i]()
+    &#125;
+    &#125;
+</code></pre>
 </section>
     <!-- Tags START -->
     
@@ -162,20 +222,13 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2022/03/27/hello-world/">
+      <a class="nav-left" href="/2022/04/10/new/">
         <span class="nav-arrow">← </span>
         
-          Vue项目开发-仿网易云APP
+          手动实现new方法
         
       </a>
     
-    
-      <a class="nav-right" href="/2022/04/25/vueNextTick/">
-        
-          nextTick源码分析
-        
-        <span class="nav-arrow"> →</span>
-      </a>
     
   </div>
 
@@ -227,7 +280,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BD%BF%E7%94%A8js%E5%AE%9E%E7%8E%B0new-%E6%96%B9%E6%B3%95"><span class="toc-nav-text">使用js实现new 方法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#new-%E5%85%B3%E9%94%AE%E5%AD%97%E4%BC%9A%E8%BF%9B%E8%A1%8C%E5%A6%82%E4%B8%8B%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%9A"><span class="toc-nav-text">new 关键字会进行如下的操作：</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-nav-text">代码示例</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#nextTick%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-nav-text">nextTick源码分析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#nextTick-%E6%98%AF-Vue-%E7%9A%84%E4%B8%80%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%9C%A8%E4%BB%8B%E7%BB%8D-Vue-%E7%9A%84-nextTick-%E4%B9%8B%E5%89%8D%EF%BC%8C%E4%B8%BA%E4%BA%86%E6%96%B9%E4%BE%BF%E5%A4%A7%E5%AE%B6%E7%90%86%E8%A7%A3%EF%BC%8C%E6%88%91%E5%85%88%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D%E4%B8%80%E4%B8%8B-JS-%E7%9A%84%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6%E3%80%82"><span class="toc-nav-text">nextTick 是 Vue 的一个核心实现，在介绍 Vue 的 nextTick 之前，为了方便大家理解，我先简单介绍一下 JS 的运行机制。</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%BA%90%E7%A0%81%E7%9B%AE%E5%BD%95-src-x2F-core-x2F-util-x2F-next-tick-js"><span class="toc-nav-text">源码目录 src&#x2F;core&#x2F;util&#x2F;next-tick.js</span></a></li></ol></li></ol></li></ol>
     
   </div>
 </aside>
@@ -237,7 +290,7 @@
 
 <script>
   (function () {
-    var url = 'https://mingzhangli.github.io/2022/04/10/new/';
+    var url = 'https://mingzhangli.github.io/2022/04/25/vueNextTick/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
