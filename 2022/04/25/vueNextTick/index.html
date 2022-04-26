@@ -201,18 +201,20 @@
         timerFunc()
     &#125;
     &#125;
-    function flushCallbacks () &#123;
-    pending = false
-    const copies = callbacks.slice(0)
-    //复制 callback
-    callbacks.length = 0
-    //清除 callback
-    for (let i = 0; i &lt; copies.length; i++) &#123;
-        //以此调用 nextTick 回调
-        copies[i]()
-    &#125;
-    &#125;
 </code></pre>
+<h5 id="MutationObserver"><a href="#MutationObserver" class="headerlink" title="MutationObserver"></a>MutationObserver</h5><img src="/2022/04/25/vueNextTick/content.png">
+
+<p><font size="4">  运行过程就是拿到<font color="red">cb</font>(nextTick函数的第一个参数)存入callbacks数组里，利用设置的pending变量&#x3D;&gt;（pending &#x3D; true）来保证一次事件循环只执行一次timerFunc(),timerFunc()函数里会判断浏览器会支持是否支持promise，如果不支持的话会继续执行直到可以执行flushCallbacks函数!</font></p>
+<pre><code>function flushCallbacks() &#123;
+pending = false;
+var copies = callbacks.slice(0);
+callbacks.length = 0;
+for (var i = 0; i &lt; copies.length; i++) &#123;
+    copies[i]();
+&#125;
+</code></pre>
+<p>}</p>
+<p>设置<font color="red">pending &#x3D; false</font> 使下个事件循环中能nextTick 函数中调用 timerFunc 函数。<br><font color="red">var copies &#x3D; callbacks.slice(0); callbacks.length &#x3D; 0;</font> 把要异步执行的callbacks 函数取出来复制一份常量 copies，然后把 callbacks 清空然后遍历 copies 执行每一项函数。</p>
 </section>
     <!-- Tags START -->
     
@@ -280,7 +282,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#nextTick%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-nav-text">nextTick源码分析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#nextTick-%E6%98%AF-Vue-%E7%9A%84%E4%B8%80%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%9C%A8%E4%BB%8B%E7%BB%8D-Vue-%E7%9A%84-nextTick-%E4%B9%8B%E5%89%8D%EF%BC%8C%E4%B8%BA%E4%BA%86%E6%96%B9%E4%BE%BF%E5%A4%A7%E5%AE%B6%E7%90%86%E8%A7%A3%EF%BC%8C%E6%88%91%E5%85%88%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D%E4%B8%80%E4%B8%8B-JS-%E7%9A%84%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6%E3%80%82"><span class="toc-nav-text">nextTick 是 Vue 的一个核心实现，在介绍 Vue 的 nextTick 之前，为了方便大家理解，我先简单介绍一下 JS 的运行机制。</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%BA%90%E7%A0%81%E7%9B%AE%E5%BD%95-src-x2F-core-x2F-util-x2F-next-tick-js"><span class="toc-nav-text">源码目录 src&#x2F;core&#x2F;util&#x2F;next-tick.js</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#nextTick%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-nav-text">nextTick源码分析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#nextTick-%E6%98%AF-Vue-%E7%9A%84%E4%B8%80%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%9C%A8%E4%BB%8B%E7%BB%8D-Vue-%E7%9A%84-nextTick-%E4%B9%8B%E5%89%8D%EF%BC%8C%E4%B8%BA%E4%BA%86%E6%96%B9%E4%BE%BF%E5%A4%A7%E5%AE%B6%E7%90%86%E8%A7%A3%EF%BC%8C%E6%88%91%E5%85%88%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D%E4%B8%80%E4%B8%8B-JS-%E7%9A%84%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6%E3%80%82"><span class="toc-nav-text">nextTick 是 Vue 的一个核心实现，在介绍 Vue 的 nextTick 之前，为了方便大家理解，我先简单介绍一下 JS 的运行机制。</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%BA%90%E7%A0%81%E7%9B%AE%E5%BD%95-src-x2F-core-x2F-util-x2F-next-tick-js"><span class="toc-nav-text">源码目录 src&#x2F;core&#x2F;util&#x2F;next-tick.js</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#MutationObserver"><span class="toc-nav-text">MutationObserver</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
     
   </div>
 </aside>
