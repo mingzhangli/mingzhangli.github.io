@@ -10,7 +10,7 @@
   
   <title>
     
-      nextTick源码分析 | mingzhangli的blog
+      面试面经 | mingzhangli的blog
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -132,8 +132,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>nextTick源码分析</h2>
-  <p class="post-date">2022-04-25</p>
+  <h2>面试面经</h2>
+  <p class="post-date">2022-05-15</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -141,80 +141,41 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h1 id="nextTick源码分析"><a href="#nextTick源码分析" class="headerlink" title="nextTick源码分析"></a>nextTick源码分析</h1><h5 id="nextTick-是-Vue-的一个核心实现，在介绍-Vue-的-nextTick-之前，为了方便大家理解，我先简单介绍一下-JS-的运行机制。"><a href="#nextTick-是-Vue-的一个核心实现，在介绍-Vue-的-nextTick-之前，为了方便大家理解，我先简单介绍一下-JS-的运行机制。" class="headerlink" title="nextTick 是 Vue 的一个核心实现，在介绍 Vue 的 nextTick 之前，为了方便大家理解，我先简单介绍一下 JS 的运行机制。"></a>nextTick 是 Vue 的一个核心实现，在介绍 Vue 的 nextTick 之前，为了方便大家理解，我先简单介绍一下 JS 的运行机制。</h5><pre><code>JS 执行是单线程的，它是基于事件循环的。事件循环大致分为以下几个步骤：
-
-(1)所有同步任务都在主线程上执行，形成一个执行栈(execution context stack)。
-
-(2)主线程之外，还存在一个&quot;任务队列&quot;(task queue)。只要异步任务有了运行结果，就在&quot;任务队列&quot;之中放置一个事件。
-
-(3)一旦&quot;执行栈&quot;中的所有同步任务执行完毕，系统就会读取&quot;任务队列&quot;，看看里面有哪些事件。那些对应的异步任务，于是结束等待状态，进入执行栈，开始执行。
-
-(4)主线程不断重复上面的第三步。
-</code></pre>
-<h3 id="源码目录-src-x2F-core-x2F-util-x2F-next-tick-js"><a href="#源码目录-src-x2F-core-x2F-util-x2F-next-tick-js" class="headerlink" title="源码目录 src&#x2F;core&#x2F;util&#x2F;next-tick.js"></a>源码目录 src&#x2F;core&#x2F;util&#x2F;next-tick.js</h3><pre><code>const callbacks = [] //储存 nextTick 回调函数
-    let pending = false //只开启一个 timerFunc
-    let timerFunc // 定时函数
-    
-    vue的降级策略（兼容）promise -&gt; MutationObserver -&gt; setImmediate -&gt; setTimeout
-    原理：利用异步队列在每个宏任务运行完以后，UI 都会重渲染，那么在 微任务（异步事件回调） 中就完成数据更新，当前次事件循环 结束就可以得到最新的 UI 了。反之如果新建一个宏任务来做数据更新，那么渲染就会进行两次。
-
-    if (typeof Promise !== &#39;undefined&#39; &amp;&amp; isNative(Promise)) &#123;
-    //如果支持promise，使用promise实现
-    const p = Promise.resolve()
-    timerFunc = () =&gt; &#123;
-        p.then(flushCallbacks)
-    &#125;
-    &#125; else if (!isIE &amp;&amp; typeof MutationObserver !== &#39;undefined&#39;) &#123;
-    //如果Promise不支持，但支持MutationObserver
-    let counter = 1
-    const observer = new MutationObserver(flushCallbacks)
-    const textNode = document.createTextNode(String(counter))
-    observer.observe(textNode, &#123;
-        characterData: true
-    &#125;)
-    //改变 counter 属性触发 flushCallbacks
-    timerFunc = () =&gt; &#123;
-        counter = (counter + 1) % 2
-        textNode.data = String(counter)
-    &#125;
-    &#125; else if (typeof setImmediate !== &#39;undefined&#39; &amp;&amp; isNative(setImmediate)) &#123;
-    //上面两种都不支持，用setImmediate
-    timerFunc = () =&gt; &#123;
-        setImmediate(flushCallbacks)
-    &#125;
-    &#125; else &#123;
-    //都不支持使用setTimeout
-    timerFunc = () =&gt; &#123;
-        setTimeout(flushCallbacks, 0)
-    &#125;
-    &#125;
-    export function nextTick (cb, ctx) &#123;
-    let _resolve
-    //压入 nextTick 回调，可存入多个
-    callbacks.push(() =&gt; &#123;
-        cb &amp;&amp; cb.call(ctx) 
-    //cb参数是调用是传过来的回调函数，ctx则为上下文，函数内部利用call调用cb回调，改变cb内部this指向
-    &#125;)
-    //开起定时函数
-    if (!pending) &#123;
-        pending = true
-        timerFunc()
-    &#125;
-    &#125;
-</code></pre>
-<h5 id="MutationObserver"><a href="#MutationObserver" class="headerlink" title="MutationObserver"></a>MutationObserver</h5><img src="/2022/04/25/vueNextTick/content.png">
-
-<p><font size="4">  运行过程就是拿到<font color="red">cb</font>  (nextTick函数的第一个参数)存入callbacks数组里，利用设置的pending变量&#x3D;&gt;（pending &#x3D; true）来保证循环只执行一次timerFunc(),timerFunc()函数里会判断浏览器会支持是否支持promise，如果不支持的话会继续执行直到可以执行flushCallbacks函数!</font></p>
-<pre><code>function flushCallbacks() &#123;
-pending = false;
-var copies = callbacks.slice(0);
-callbacks.length = 0;
-for (var i = 0; i &lt; copies.length; i++) &#123;
-    copies[i]();
-&#125;
-</code></pre>
-<p>}</p>
-<p>设置<font color="red">pending &#x3D; false</font> 使下个事件循环中能nextTick 函数中调用 timerFunc 函数<font color="red">var copies &#x3D; callbacks.slice(0); callbacks.length &#x3D; 0;</font> 把要异步执行的callbacks 函数取出来复制一份常量 copies，然后把 callbacks 清空然后遍历 copies 执行每一项函数。</p>
+    <section class="markdown-content"><p>本周五约了一个面试，对面试中问到面试题做个总结!(面试官人真的特别和蔼，刚开始我有点紧张问了一些简单css3问题，我都没答上来了，面试一直都在耐心的跟我说不要紧张！)</p>
+<h3 id="面试题大纲"><a href="#面试题大纲" class="headerlink" title="面试题大纲"></a>面试题大纲</h3><h4 id="css3类型"><a href="#css3类型" class="headerlink" title="css3类型"></a>css3类型</h4><p>1.css3新增的选择器<br><font color="blue">属性选择器和结构性伪类选择器</font></p>
+<p>2.结构性伪类选择器有哪些<br><font color="blue"></font></p>
+<ul>
+<li>selector:nth-child(n) {} - - - 所有兄弟元素中的第 n 个</li>
+<li>selector:nth-of-type(n) {} - - - 所有兄弟元素中、满足选择器 selector 的第 n 个</li>
+<li>selector:nth-last-child(n) {} - - - 所有兄弟元素中的倒数第 n 个</li>
+<li>selector:nth-last-of-type(n) {} - - - 所有兄弟元素中、满足选择器 selector 的倒数第 n 个</li>
+<li>selector:first-child {} - - - 所有兄弟元素中的第 1 个</li>
+<li>selector:first-of-type {} - - - 所有兄弟元素中、满足选择器 selector 的第 1 个</li>
+<li>selector:last-child {} - - - 所有兄弟元素中的最后 1 个</li>
+<li>selector:last-of-type {} - - - 所有兄弟元素中、满足选择器 selector 的最后 1 个</li>
+<li>selector:nth-child(even) {} - - - 选中当前元素的父元素下，满足选择器 selector 的，第偶数个子元素</li>
+<li>selector:nth-child(odd) {} - - - 选中当前元素的父元素下，满足选择器 selector 的，第奇数个子元素</li>
+</ul>
+<p>3.实际用法选择div下面的第一个元素<br><font color="blue"></font></p>
+<ul>
+<li>:nth-child(1)</li>
+<li>:first-child</li>
+</ul>
+<p>4.10个元素选择最后9个<br><font color="blue"><br>    nth:child(n+2)    选择第几个后面的所有元素就是n+几<br><font></font></font></p>
+<p>5.其他新增的属性</p>
+<ul>
+<li>broder-radius、box-shadow</li>
+<li>transform、translation|、animation</li>
+</ul>
+<h4 id="H5题"><a href="#H5题" class="headerlink" title="H5题"></a>H5题</h4><p>1.新增的H5属性<br><font color="blue"></font></p>
+<ul>
+<li>语义化标签(header，nav，footer….)</li>
+<li>localstorge、sessionstorge</li>
+<li>canvas</li>
+<li>audio、video标签….</li>
+</ul>
+<h4 id="JS题"><a href="#JS题" class="headerlink" title="JS题"></a>JS题</h4><p>1.作用链？<br>2.如何延长作用域链？<br>3.闭包是如何理解？ 会造成内存泄露<br>4.介绍一下js中的隐式转化？<br>5.如何准确地判断的Object类型？<br>6.map和foreach的区别？<br>7.map常用的方法？<br>8.ajax如何理解？ 网页中的局别刷新<br>9.XHR发送请求的流程？<br>10.axios的响应拦截和请求拦截如何设置？<br>11.axios如何取消请求？<br>12.get和post的请求参数有什么区别？</p>
+<h4 id="vue题"><a href="#vue题" class="headerlink" title="vue题"></a>vue题</h4><p>1.vue声明周期函数？<br>2.vue中请求数据是在哪个生命周期函数？<br>3.vue中的v-for为什么不建议index作为key？<br>4.vue的组件传值？<br>5.vueX的核心概念？<br>6.vueX中修改仓库的状态有什么区别？<br>7.vue-router传递参数有哪些？<br>8.vue-router可以用path提到name属性吗？<br>9.用path访问路由是否可以用query传参？<br>10.你对使用element-ui是否熟悉？</p>
 </section>
     <!-- Tags START -->
     
@@ -224,20 +185,13 @@ for (var i = 0; i &lt; copies.length; i++) &#123;
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2022/04/10/new/">
+      <a class="nav-left" href="/2022/04/25/vueNextTick/">
         <span class="nav-arrow">← </span>
         
-          手动实现new方法
+          nextTick源码分析
         
       </a>
     
-    
-      <a class="nav-right" href="/2022/05/15/%E9%9D%A2%E8%AF%95%E9%9D%A2%E7%BB%8F/">
-        
-          面试面经
-        
-        <span class="nav-arrow"> →</span>
-      </a>
     
   </div>
 
@@ -289,7 +243,7 @@ for (var i = 0; i &lt; copies.length; i++) &#123;
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#nextTick%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-nav-text">nextTick源码分析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#nextTick-%E6%98%AF-Vue-%E7%9A%84%E4%B8%80%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%9C%A8%E4%BB%8B%E7%BB%8D-Vue-%E7%9A%84-nextTick-%E4%B9%8B%E5%89%8D%EF%BC%8C%E4%B8%BA%E4%BA%86%E6%96%B9%E4%BE%BF%E5%A4%A7%E5%AE%B6%E7%90%86%E8%A7%A3%EF%BC%8C%E6%88%91%E5%85%88%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D%E4%B8%80%E4%B8%8B-JS-%E7%9A%84%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6%E3%80%82"><span class="toc-nav-text">nextTick 是 Vue 的一个核心实现，在介绍 Vue 的 nextTick 之前，为了方便大家理解，我先简单介绍一下 JS 的运行机制。</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%BA%90%E7%A0%81%E7%9B%AE%E5%BD%95-src-x2F-core-x2F-util-x2F-next-tick-js"><span class="toc-nav-text">源码目录 src&#x2F;core&#x2F;util&#x2F;next-tick.js</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#MutationObserver"><span class="toc-nav-text">MutationObserver</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%9D%A2%E8%AF%95%E9%A2%98%E5%A4%A7%E7%BA%B2"><span class="toc-nav-text">面试题大纲</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#css3%E7%B1%BB%E5%9E%8B"><span class="toc-nav-text">css3类型</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#H5%E9%A2%98"><span class="toc-nav-text">H5题</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#JS%E9%A2%98"><span class="toc-nav-text">JS题</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#vue%E9%A2%98"><span class="toc-nav-text">vue题</span></a></li></ol></li></ol>
     
   </div>
 </aside>
@@ -299,7 +253,7 @@ for (var i = 0; i &lt; copies.length; i++) &#123;
 
 <script>
   (function () {
-    var url = 'https://mingzhangli.github.io/2022/04/25/vueNextTick/';
+    var url = 'https://mingzhangli.github.io/2022/05/15/面试面经/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
