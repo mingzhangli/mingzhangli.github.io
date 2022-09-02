@@ -10,7 +10,7 @@
   
   <title>
     
-      mingzhangli的blog
+      样式穿透是啥? | mingzhangli的blog
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -132,77 +132,165 @@
 </header>
 
     <div id="article-banner">
-  <h2>Archives</h2>
-  <p class="post-date">Archives</p>
+  <h2>样式穿透是啥?</h2>
+  <p class="post-date">2022-08-24</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
 </div>
-<main class="app-body" id="archives">
-  
-  
-  
-    <section class="time-section">
-  <h1 class="section-year">
-    2022
-  </h1>
-  <div class="section-list">
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h4 id="引入第三方组件库（antd），但是组件库组件提供的样式想要修改怎么办？"><a href="#引入第三方组件库（antd），但是组件库组件提供的样式想要修改怎么办？" class="headerlink" title="引入第三方组件库（antd），但是组件库组件提供的样式想要修改怎么办？"></a>引入第三方组件库（antd），但是组件库组件提供的样式想要修改怎么办？</h4><pre><code>一般在src文件夹下层有一个global.css文件可以用来修改项目的整体 
+样式，但是这个页面组件用的样式被修改后，另外页面同样的组件也会 
+ 被修改！所以不能使用这种方法修改。
+
+
+修改方法有:在你想要修改的页面组件创建一个同级的index.less,在你 
+的页面的fragment元素使用一个className包裹住修改的ui组件，然后 
+在同级index.less文件里,按照下面这种格式修改
+</code></pre>
+<ul>
+<li><img src="/2022/08/24/%E4%BB%80%E4%B9%88%E6%98%AF%E6%A0%B7%E5%BC%8F%E7%A9%BF%E9%80%8F/UI.png"></li>
+</ul>
+</section>
+    <!-- Tags START -->
     
+    <!-- Tags END -->
+    <!-- NAV START -->
     
-      <div class="section-list-item">
-        <a href="/2022/08/24/%E4%BB%80%E4%B9%88%E6%98%AF%E6%A0%B7%E5%BC%8F%E7%A9%BF%E9%80%8F/" class="archive-title">样式穿透是啥?</a>
-        <p class="archive-date">08-24</p>
-      </div>
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <div class="section-list-item">
-        <a href="/2022/08/19/%E5%89%8D%E7%AB%AF%E5%A6%82%E4%BD%95%E8%B0%83%E7%94%A8%E6%8E%A5%E5%8F%A3/" class="archive-title">get请求和post请求?</a>
-        <p class="archive-date">08-19</p>
-      </div>
+      <a class="nav-left" href="/2022/08/19/%E5%89%8D%E7%AB%AF%E5%A6%82%E4%BD%95%E8%B0%83%E7%94%A8%E6%8E%A5%E5%8F%A3/">
+        <span class="nav-arrow">← </span>
+        
+          get请求和post请求?
+        
+      </a>
     
-      <div class="section-list-item">
-        <a href="/2022/08/17/react%E5%A6%82%E4%BD%95%E4%BC%A0%E5%80%BC/" class="archive-title"></a>
-        <p class="archive-date">08-17</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2022/08/16/%E5%A6%82%E4%BD%95%E8%B0%83%E8%AF%95%E6%8E%A5%E5%8F%A3/" class="archive-title">前端如何调试接口?</a>
-        <p class="archive-date">08-16</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2022/05/31/vue%E5%88%9D%E5%A7%8B%E5%8C%96%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/" class="archive-title">Vue初始化做了什么?</a>
-        <p class="archive-date">05-31</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2022/05/15/%E9%9D%A2%E8%AF%95%E9%9D%A2%E7%BB%8F/" class="archive-title">面试面经</a>
-        <p class="archive-date">05-15</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2022/04/25/vueNextTick/" class="archive-title">nextTick源码分析</a>
-        <p class="archive-date">04-25</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2022/04/10/new/" class="archive-title">手动实现new方法</a>
-        <p class="archive-date">04-10</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2022/03/27/hello-world/" class="archive-title">Vue项目开发-仿网易云APP</a>
-        <p class="archive-date">03-27</p>
-      </div>
     
   </div>
-</section>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
   
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#%E5%BC%95%E5%85%A5%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E5%BA%93%EF%BC%88antd%EF%BC%89%EF%BC%8C%E4%BD%86%E6%98%AF%E7%BB%84%E4%BB%B6%E5%BA%93%E7%BB%84%E4%BB%B6%E6%8F%90%E4%BE%9B%E7%9A%84%E6%A0%B7%E5%BC%8F%E6%83%B3%E8%A6%81%E4%BF%AE%E6%94%B9%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="toc-nav-text">引入第三方组件库（antd），但是组件库组件提供的样式想要修改怎么办？</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
 </main>
 
 <script>
   (function () {
-    var url = 'https://mingzhangli.github.io/archives/2022/index.html';
-    $('#article-banner').geopattern(url);
-    $('.header').removeClass('fixed-header');
+    var url = 'https://mingzhangli.github.io/2022/08/24/什么是样式穿透/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
   })();
 </script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
     <div class="scroll-top">
   <span class="arrow-icon"></span>
 </div>
